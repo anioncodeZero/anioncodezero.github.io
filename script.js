@@ -271,7 +271,7 @@ function onResults(results) {
           targetY = y;
         }
 
-        // OPEN
+        // OPENs
         else if (fingerCount >= 4) {
 
           particleMode = "explode";
