@@ -1,60 +1,65 @@
-// Smooth scrolling untuk navigation links
-function scrollTo(selector) {
-    const element = document.querySelector(selector);
-    if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
+const videoElement = document.querySelector('.input_video');
+const canvasElement = document.querySelector('.output_canvas');
+const canvasCtx = canvasElement.getContext('2d');
+
+canvasElement.width = 800;
+canvasElement.height = 600;
+
+function onResults(results) {
+  canvasCtx.save();
+
+  canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+
+  canvasCtx.drawImage(
+    results.image,
+    0,
+    0,
+    canvasElement.width,
+    canvasElement.height
+  );
+
+  if (results.multiHandLandmarks) {
+    for (const landmarks of results.multiHandLandmarks) {
+
+      drawConnectors(
+        canvasCtx,
+        landmarks,
+        HAND_CONNECTIONS,
+        { color: '#00FF00', lineWidth: 4 }
+      );
+
+      drawLandmarks(
+        canvasCtx,
+        landmarks,
+        { color: '#FF0000', lineWidth: 2 }
+      );
     }
+  }
+
+  canvasCtx.restore();
 }
 
-// Add smooth scrolling untuk semua nav links
-document.querySelectorAll('.nav-link').forEach(link => {
-    link.addEventListener('click', function(e) {
-        const href = this.getAttribute('href');
-        if (href.startsWith('#')) {
-            e.preventDefault();
-            scrollTo(href);
-        }
-    });
+const hands = new Hands({
+  locateFile: (file) => {
+    return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
+  }
 });
 
-// Contact form handling
-document.getElementById('contactForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    // Get form data
-    const name = document.getElementById('name').value;
-    const email = document.getElementById('email').value;
-    const message = document.getElementById('message').value;
-    
-    // Validasi
-    if (name && email && message) {
-        // Tampilkan alert success
-        alert(`Terima kasih ${name}! Pesan Anda telah kami terima. Kami akan menghubungi Anda di ${email}`);
-        
-        // Reset form
-        this.reset();
-    } else {
-        alert('Mohon isi semua field!');
-    }
+hands.setOptions({
+  maxNumHands: 2,
+  modelComplexity: 1,
+  minDetectionConfidence: 0.7,
+  minTrackingConfidence: 0.7
 });
 
-// Optional: Add active state to nav links based on scroll position
-window.addEventListener('scroll', function() {
-    let current = '';
-    
-    document.querySelectorAll('section').forEach(section => {
-        const sectionTop = section.offsetTop;
-        const sectionHeight = section.clientHeight;
-        
-        if (pageYOffset >= sectionTop - 200) {
-            current = section.getAttribute('id');
-        }
-    });
-    
-    document.querySelectorAll('.nav-link').forEach(link => {
-        link.classList.remove('active');
-        if (link.getAttribute('href') === `#${current}`) {
-            link.classList.add('active');
-        }
-    });
+hands.onResults(onResults);
+
+const camera = new Camera(videoElement, {
+  onFrame: async () => {
+    await hands.send({ image: videoElement });
+  },
+  width: 800,
+  height: 600
 });
+
+camera.start();
