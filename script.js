@@ -1,220 +1,244 @@
-const videoElement = document.querySelector(".input_video");
-const canvasElement = document.querySelector(".output_canvas");
-const canvasCtx = canvasElement.getContext("2d");
-const particleCanvas = document.getElementById("particle_canvas");
-const particleCtx = particleCanvas.getContext("2d");
+// ========== THREE.JS SETUP ==========
+const container = document.getElementById('scene-container');
+const canvasElement = document.querySelector('.output_canvas');
+const videoElement = document.querySelector('.input_video');
+const canvasCtx = canvasElement.getContext('2d');
 
 canvasElement.width = 800;
 canvasElement.height = 600;
-particleCanvas.width = 500;
-particleCanvas.height = 600;
 
-let targetX = particleCanvas.width / 2;
-let targetY = particleCanvas.height / 2;
-let particleMode = "idle";
+// Three.js Scene
+let scene, camera, renderer, objects = [];
+let handGrabbed = null;
+let handPos = { x: 0, y: 0, z: 0 };
+let lastHandPos = { x: 0, y: 0, z: 0 };
+let isGrabbing = false;
+let grabStrength = 0;
+
+function initThreeJS() {
+  // Scene
+  scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x0a0a0a);
+  scene.fog = new THREE.Fog(0x0a0a0a, 100, 500);
+
+  // Camera
+  camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+  camera.position.z = 50;
+
+  // Renderer
+  renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+  renderer.setSize(container.clientWidth, container.clientHeight);
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFShadowShadowMap;
+  container.appendChild(renderer.domElement);
+
+  // Lighting
+  const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+  scene.add(ambientLight);
+
+  const pointLight = new THREE.PointLight(0x00ff88, 1.5, 200);
+  pointLight.position.set(0, 30, 40);
+  pointLight.castShadow = true;
+  scene.add(pointLight);
+
+  const pointLight2 = new THREE.PointLight(0xff00ff, 1, 150);
+  pointLight2.position.set(-40, -20, 30);
+  scene.add(pointLight2);
+
+  // Start animation loop
+  animate();
+}
+
+function createObject(type = 'cube') {
+  let geometry;
+  const colors = [0x00ffff, 0xff00ff, 0x00ff88, 0xff6600, 0x00ccff, 0xff0099];
+  const randomColor = colors[Math.floor(Math.random() * colors.length)];
+
+  switch(type) {
+    case 'sphere':
+      geometry = new THREE.SphereGeometry(8, 32, 32);
+      break;
+    case 'pyramid':
+      geometry = new THREE.TetrahedronGeometry(10, 0);
+      break;
+    case 'torus':
+      geometry = new THREE.TorusGeometry(8, 3, 16, 100);
+      break;
+    default:
+      geometry = new THREE.BoxGeometry(14, 14, 14);
+  }
+
+  const material = new THREE.MeshStandardMaterial({
+    color: randomColor,
+    metalness: 0.4,
+    roughness: 0.3,
+    emissive: randomColor,
+    emissiveIntensity: 0.2
+  });
+
+  const mesh = new THREE.Mesh(geometry, material);
+  mesh.castShadow = true;
+  mesh.receiveShadow = true;
+  
+  mesh.position.set(
+    (Math.random() - 0.5) * 60,
+    (Math.random() - 0.5) * 60,
+    (Math.random() - 0.5) * 20
+  );
+
+  mesh.rotation.set(
+    Math.random() * Math.PI,
+    Math.random() * Math.PI,
+    Math.random() * Math.PI
+  );
+
+  // Physics properties
+  mesh.userData = {
+    velocity: new THREE.Vector3(0, 0, 0),
+    angularVelocity: new THREE.Vector3(
+      (Math.random() - 0.5) * 0.1,
+      (Math.random() - 0.5) * 0.1,
+      (Math.random() - 0.5) * 0.1
+    ),
+    grabbed: false,
+    grabOffset: new THREE.Vector3(0, 0, 0)
+  };
+
+  scene.add(mesh);
+  objects.push(mesh);
+  return mesh;
+}
+
+function updatePhysics() {
+  objects.forEach((obj, index) => {
+    if (!obj.userData.grabbed) {
+      // Gravity
+      obj.userData.velocity.y -= 0.5;
+
+      // Friction
+      obj.userData.velocity.multiplyScalar(0.98);
+
+      // Update position
+      obj.position.add(obj.userData.velocity);
+
+      // Update rotation
+      obj.rotation.x += obj.userData.angularVelocity.x;
+      obj.rotation.y += obj.userData.angularVelocity.y;
+      obj.rotation.z += obj.userData.angularVelocity.z;
+
+      // Boundary check (remove if out of bounds)
+      if (obj.position.y < -200) {
+        scene.remove(obj);
+        objects.splice(index, 1);
+      }
+
+      // Bounce off boundaries
+      if (obj.position.x > 100 || obj.position.x < -100) {
+        obj.userData.velocity.x *= -0.8;
+        obj.position.x = Math.max(-100, Math.min(100, obj.position.x));
+      }
+
+      if (obj.position.z > 80 || obj.position.z < -80) {
+        obj.userData.velocity.z *= -0.8;
+        obj.position.z = Math.max(-80, Math.min(80, obj.position.z));
+      }
+
+      // Bottom bounce
+      if (obj.position.y < -60) {
+        obj.userData.velocity.y *= -0.6;
+        obj.position.y = -60;
+      }
+    }
+  });
+}
+
+function findNearestObject(pos, range = 30) {
+  let nearest = null;
+  let minDist = range;
+
+  objects.forEach(obj => {
+    const dist = pos.distanceTo(obj.position);
+    if (dist < minDist) {
+      minDist = dist;
+      nearest = obj;
+    }
+  });
+
+  return nearest;
+}
+
+function grabObject(obj, handPosition) {
+  if (!obj) return;
+
+  obj.userData.grabbed = true;
+  obj.userData.grabOffset.copy(obj.position).sub(handPosition);
+  handGrabbed = obj;
+  isGrabbing = true;
+
+  // Highlight grabbed object
+  obj.material.emissiveIntensity = 0.8;
+}
+
+function releaseObject() {
+  if (handGrabbed) {
+    handGrabbed.userData.grabbed = false;
+    handGrabbed.material.emissiveIntensity = 0.2;
+
+    // Apply throw velocity
+    handGrabbed.userData.velocity.copy(
+      new THREE.Vector3(
+        (handPos.x - lastHandPos.x) * 0.5,
+        (handPos.y - lastHandPos.y) * 0.5,
+        (handPos.z - lastHandPos.z) * 0.5
+      )
+    );
+
+    handGrabbed = null;
+    isGrabbing = false;
+  }
+}
+
+function animate() {
+  requestAnimationFrame(animate);
+
+  updatePhysics();
+
+  // Update grabbed object position
+  if (handGrabbed && isGrabbing) {
+    const targetPos = new THREE.Vector3(handPos.x, handPos.y, handPos.z)
+      .add(handGrabbed.userData.grabOffset);
+
+    handGrabbed.position.lerp(targetPos, 0.15);
+
+    // Spin while grabbed
+    handGrabbed.rotation.x += 0.05;
+    handGrabbed.rotation.y += 0.08;
+  }
+
+  renderer.render(scene, camera);
+}
+
+// ========== MEDIAPIPE DETECTION ==========
+let lastFrameTime = 0;
+const FPS = 25;
 
 function isFingerUp(tip, base, landmarks) {
   return landmarks[tip].y < landmarks[base].y;
 }
 
-function countFingers(landmarks) {
-  let count = 0;
-  if (landmarks[8].y < landmarks[6].y) count++;
-  if (landmarks[12].y < landmarks[10].y) count++;
-  if (landmarks[16].y < landmarks[14].y) count++;
-  if (landmarks[20].y < landmarks[18].y) count++;
-  return count;
+function getPinchStrength(landmarks) {
+  const thumbTip = landmarks[4];
+  const indexTip = landmarks[8];
+  const dx = thumbTip.x - indexTip.x;
+  const dy = thumbTip.y - indexTip.y;
+  const dist = Math.sqrt(dx * dx + dy * dy);
+  return Math.max(0, 1 - dist * 2);
 }
 
-// ========== PARTICLE DENGAN KARAKTER RANDOM ==========
-// Kumpulan karakter keren (bisa ditambah sesuai selera)
-const CHAR_SET = "ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜｦﾝ0123456789♠♣♥♦←↑→↓⊕⊖⊗⊘⊙⌘⎈⏣⌬⏚⎔";
-
-class Particle {
-  constructor() {
-    this.reset();
-    this.vx = 0;
-    this.vy = 0;
-    this.age = Math.random() * 100;
-  }
-  
-  reset() {
-    this.x = Math.random() * particleCanvas.width;
-    this.y = Math.random() * particleCanvas.height;
-    this.size = Math.random() * 14 + 8; // ukuran font (px)
-    this.baseSize = this.size;
-    this.angle = Math.random() * Math.PI * 2;
-    this.speed = Math.random() * 0.08 + 0.04;
-    this.vortexRadius = 40 + Math.random() * 90;
-    this.vortexAngle = Math.random() * Math.PI * 2;
-    this.char = CHAR_SET[Math.floor(Math.random() * CHAR_SET.length)];
-    this.color = "rgba(255,255,255,0.95)"; // dominan putih
-    this.vx = 0;
-    this.vy = 0;
-    this.age = 0;
-  }
-
-  update() {
-    this.age += 0.02;
-    let ax = 0, ay = 0;
-    const noiseX = Math.sin(this.age * 5 + this.angle) * 0.3;
-    const noiseY = Math.cos(this.age * 5 + this.angle) * 0.3;
-
-    switch (particleMode) {
-      case "idle":
-        this.angle += this.speed * 2;
-        ax = Math.cos(this.angle) * 0.4 + noiseX;
-        ay = Math.sin(this.angle) * 0.4 + noiseY;
-        this.targetColor = "rgba(255,255,255,0.9)";
-        this.targetSize = this.baseSize;
-        break;
-
-      case "follow":
-        const dxf = targetX - this.x;
-        const dyf = targetY - this.y;
-        const distF = Math.sqrt(dxf*dxf+dyf*dyf) || 1;
-        const forceF = 0.08 * Math.min(distF/30, 1);
-        ax = dxf * forceF + Math.cos(this.angle * 6) * 1.5;
-        ay = dyf * forceF + Math.sin(this.angle * 6) * 1.5;
-        this.angle += this.speed;
-        this.targetColor = distF < 50 ? "rgba(255,255,255,1)" : "rgba(200,220,255,0.9)";
-        this.targetSize = this.baseSize * (1 + 1/(distF*0.05+1));
-        break;
-
-      case "grab":
-        const dxg = targetX - this.x;
-        const dyg = targetY - this.y;
-        const distG = Math.sqrt(dxg*dxg+dyg*dyg) || 1;
-        const forceG = 0.04;
-        ax = dxg * forceG + Math.cos(this.angle * 10) * 2;
-        ay = dyg * forceG + Math.sin(this.angle * 10) * 2;
-        this.angle += this.speed;
-        this.targetColor = distG < 30 ? "rgba(255,255,240,1)" : "rgba(255,255,200,0.8)";
-        this.targetSize = this.baseSize * 0.8;
-        break;
-
-      case "vortex":
-        this.vortexAngle += 0.09;
-        const destX = targetX + Math.cos(this.vortexAngle) * this.vortexRadius;
-        const destY = targetY + Math.sin(this.vortexAngle) * this.vortexRadius;
-        const dxv = destX - this.x;
-        const dyv = destY - this.y;
-        ax = dxv * 0.1;
-        ay = dyv * 0.1;
-        this.targetColor = "rgba(255,255,255,0.85)";
-        this.targetSize = this.baseSize * 1.3;
-        break;
-
-      case "disperse":
-        const dx = this.x - targetX;
-        const dy = this.y - targetY;
-        const dist = Math.sqrt(dx*dx+dy*dy) || 1;
-        ax = (dx / dist) * 1.8;
-        ay = (dy / dist) * 1.8;
-        this.targetColor = "rgba(255,200,200,0.8)";
-        this.targetSize = this.baseSize * 0.7;
-        break;
-
-      case "explode":
-        const ang = Math.atan2(this.y - targetY, this.x - targetX);
-        ax = Math.cos(ang) * 4;
-        ay = Math.sin(ang) * 4;
-        this.targetColor = "rgba(255,255,255,0.9)";
-        this.targetSize = this.baseSize * 1.5;
-        // Ubah karakter secara cepat saat explode
-        if (Math.random() < 0.3) this.char = CHAR_SET[Math.floor(Math.random() * CHAR_SET.length)];
-        break;
-    }
-
-    this.vx += ax;
-    this.vy += ay;
-    this.vx *= 0.96;
-    this.vy *= 0.96;
-    this.x += this.vx;
-    this.y += this.vy;
-
-    // Lerp warna
-    if (this.targetColor) {
-      this.color = this.targetColor;
-    }
-    // Lerp ukuran
-    this.size += (this.targetSize - this.size) * 0.2;
-
-    if (this.x < -60 || this.x > particleCanvas.width + 60 ||
-        this.y < -60 || this.y > particleCanvas.height + 60) {
-      this.reset();
-      this.x = Math.random() * particleCanvas.width;
-      this.y = Math.random() * particleCanvas.height;
-      this.vx = 0;
-      this.vy = 0;
-    }
-  }
-
-  draw(ctx) {
-    ctx.save();
-    ctx.font = `${this.size}px "Courier New", monospace`;
-    ctx.fillStyle = this.color;
-    ctx.shadowBlur = 12;
-    ctx.shadowColor = "rgba(255,255,255,0.8)";
-    ctx.fillText(this.char, this.x, this.y);
-    ctx.restore();
-  }
-}
-
-// Buat 300 partikel karakter
-const particles = [];
-for (let i = 0; i < 300; i++) {
-  particles.push(new Particle());
-}
-
-// Buffer trail
-const trailBuffer = document.createElement("canvas");
-trailBuffer.width = particleCanvas.width;
-trailBuffer.height = particleCanvas.height;
-const trailCtx = trailBuffer.getContext("2d");
-
-function animateParticles() {
-  // Trail lebih transparan agar karakter tidak terlalu cepat hilang
-  trailCtx.fillStyle = "rgba(0, 0, 0, 0.22)";
-  trailCtx.fillRect(0, 0, particleCanvas.width, particleCanvas.height);
-
-  for (const p of particles) {
-    p.update();
-    p.draw(trailCtx);
-  }
-
-  // Jaringan antar partikel (putih sangat tipis) – opsional, bisa dihapus jika mengganggu
-  trailCtx.save();
-  trailCtx.strokeStyle = "rgba(255,255,255,0.04)";
-  trailCtx.lineWidth = 0.5;
-  const maxDist = 50;
-  for (let i = 0; i < particles.length; i++) {
-    const pi = particles[i];
-    for (let j = i + 1; j < particles.length; j++) {
-      const pj = particles[j];
-      const dx = pi.x - pj.x;
-      const dy = pi.y - pj.y;
-      const dist = Math.sqrt(dx*dx+dy*dy);
-      if (dist < maxDist) {
-        trailCtx.beginPath();
-        trailCtx.moveTo(pi.x, pi.y);
-        trailCtx.lineTo(pj.x, pj.y);
-        trailCtx.stroke();
-      }
-    }
-  }
-  trailCtx.restore();
-
-  particleCtx.clearRect(0, 0, particleCanvas.width, particleCanvas.height);
-  particleCtx.drawImage(trailBuffer, 0, 0);
-  requestAnimationFrame(animateParticles);
-}
-animateParticles();
-
-// ========== MEDIAPIPE DETECTION (TANPA MIRROR) ==========
 const hands = new Hands({
   locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
 });
+
 hands.setOptions({
   maxNumHands: 1,
   modelComplexity: 0,
@@ -228,107 +252,126 @@ function onResults(results) {
   canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
   canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
 
-  let fingerCount = 0;
-  let handDetected = false;
-  let indexTip = null;
+  let gestureEmoji = '✋';
+  let infoText = 'No hand detected';
 
   if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
-    handDetected = true;
     const landmarks = results.multiHandLandmarks[0];
 
-    drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, { color: "#ffffff", lineWidth: 3 });
-    drawLandmarks(canvasCtx, landmarks, { color: "#aaaaaa", lineWidth: 2 });
+    // Draw hand skeleton
+    canvasCtx.strokeStyle = '#00ff88';
+    canvasCtx.lineWidth = 2;
+    canvasCtx.fillStyle = '#00ff88';
 
-    // Koordinat teks
-    canvasCtx.save();
-    canvasCtx.font = '9px "Courier New", monospace';
-    canvasCtx.fillStyle = "#ffffff";
-    canvasCtx.shadowBlur = 6;
-    canvasCtx.shadowColor = "#ffffff";
-    const labels = ["0","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20"];
-    for (let i = 0; i < landmarks.length; i++) {
-      const lm = landmarks[i];
-      const displayX = lm.x * canvasElement.width;
-      const displayY = lm.y * canvasElement.height;
-      canvasCtx.fillText(`${labels[i]}`, displayX + 6, displayY - 6);
-    }
-    canvasCtx.restore();
+    // Draw connections (simplified)
+    const connections = [
+      [0,1],[1,2],[2,3],[3,4], // thumb
+      [0,5],[5,6],[6,7],[7,8], // index
+      [0,9],[9,10],[10,11],[11,12], // middle
+      [0,13],[13,14],[14,15],[15,16], // ring
+      [0,17],[17,18],[18,19],[19,20] // pinky
+    ];
 
-    fingerCount = countFingers(landmarks);
-    const indexUp = isFingerUp(8, 6, landmarks);
-    const middleUp = isFingerUp(12, 10, landmarks);
-    const ringUp = isFingerUp(16, 14, landmarks);
+    connections.forEach(([start, end]) => {
+      const p1 = landmarks[start];
+      const p2 = landmarks[end];
+      canvasCtx.beginPath();
+      canvasCtx.moveTo(p1.x * canvasElement.width, p1.y * canvasElement.height);
+      canvasCtx.lineTo(p2.x * canvasElement.width, p2.y * canvasElement.height);
+      canvasCtx.stroke();
+    });
 
-    const finger = landmarks[8];
-    const x = finger.x * particleCanvas.width;
-    const y = finger.y * particleCanvas.height;
+    // Finger joints
+    landmarks.forEach(lm => {
+      canvasCtx.beginPath();
+      canvasCtx.arc(lm.x * canvasElement.width, lm.y * canvasElement.height, 4, 0, Math.PI * 2);
+      canvasCtx.fill();
+    });
 
-    // Mode partikel
-    if (fingerCount === 1 && indexUp) {
-      particleMode = "follow";
-      targetX = x;
-      targetY = y;
-    } else if (fingerCount === 2 && indexUp && middleUp) {
-      particleMode = "vortex";
-      targetX = x;
-      targetY = y;
-    } else if (fingerCount === 3 && indexUp && middleUp && ringUp) {
-      particleMode = "disperse";
-      targetX = x;
-      targetY = y;
-    } else if (fingerCount >= 4) {
-      particleMode = "explode";
-    } else if (fingerCount === 0) {
-      particleMode = "grab";
-      targetX = x;
-      targetY = y;
+    // Hand position (index finger tip to 3D space)
+    const indexFinger = landmarks[8];
+    lastHandPos = { ...handPos };
+    handPos.x = (indexFinger.x - 0.5) * 100;
+    handPos.y = (0.5 - indexFinger.y) * 80;
+    handPos.z = (indexFinger.z || 0.5) * 20;
+
+    // Pinch detection
+    const pinch = getPinchStrength(landmarks);
+    grabStrength = pinch;
+
+    if (pinch > 0.6) {
+      gestureEmoji = '✌️';
+      infoText = `PINCHING: ${Math.round(pinch * 100)}%`;
+
+      if (!isGrabbing) {
+        const nearbyObj = findNearestObject(new THREE.Vector3(handPos.x, handPos.y, handPos.z), 40);
+        if (nearbyObj) {
+          grabObject(nearbyObj, new THREE.Vector3(handPos.x, handPos.y, handPos.z));
+          gestureEmoji = '👌';
+          infoText = 'GRABBED!';
+        }
+      }
     } else {
-      particleMode = "idle";
+      if (isGrabbing) {
+        releaseObject();
+        gestureEmoji = '🚀';
+        infoText = 'THROWN!';
+      }
     }
 
-    // Index tip untuk info (koordinat mirror agar seperti bercermin)
-    indexTip = {
-      x: (1 - finger.x) * canvasElement.width,
-      y: finger.y * canvasElement.height
-    };
-  } else {
-    particleMode = "idle";
-  }
-
-  
-
-  // Garis bantu target (putih)
-  if (handDetected && (particleMode === "follow" || particleMode === "grab" || particleMode === "vortex")) {
-    if (indexTip) {
-      canvasCtx.save();
-      canvasCtx.strokeStyle = "#ffffff";
-      canvasCtx.shadowColor = "#ffffff";
-      canvasCtx.shadowBlur = 6;
-      canvasCtx.beginPath();
-      canvasCtx.moveTo(indexTip.x, indexTip.y);
-      const targetDisplayX = targetX * (canvasElement.width / particleCanvas.width);
-      const targetDisplayY = targetY * (canvasElement.height / particleCanvas.height);
-      canvasCtx.lineTo(targetDisplayX, targetDisplayY);
-      canvasCtx.stroke();
-      canvasCtx.beginPath();
-      canvasCtx.arc(targetDisplayX, targetDisplayY, 8, 0, Math.PI * 2);
-      canvasCtx.stroke();
-      canvasCtx.restore();
+    if (handGrabbed) {
+      infoText = `HOLDING: ${Math.round(grabStrength * 100)}% - Objects: ${objects.length}`;
+    } else {
+      infoText = `Ready - Objects: ${objects.length} - Grab strength: ${Math.round(pinch * 100)}%`;
     }
+
   }
+
+  // Update UI
+  document.getElementById('info').textContent = infoText;
+  document.getElementById('gesture-icon').textContent = gestureEmoji;
 }
 
-// Kamera
-let lastFrameTime = 0;
-const FPS = 20;
-const camera = new Camera(videoElement, {
+const camera2 = new Camera(videoElement, {
   onFrame: async () => {
     const now = Date.now();
     if (now - lastFrameTime < 1000 / FPS) return;
     lastFrameTime = now;
     await hands.send({ image: videoElement });
   },
-  width: 480,
-  height: 360
+  width: 640,
+  height: 480
 });
-camera.start();
+
+// ========== BUTTON CONTROLS ==========
+document.getElementById('btn-cube').addEventListener('click', () => createObject('cube'));
+document.getElementById('btn-sphere').addEventListener('click', () => createObject('sphere'));
+document.getElementById('btn-pyramid').addEventListener('click', () => createObject('pyramid'));
+document.getElementById('btn-torus').addEventListener('click', () => createObject('torus'));
+
+document.getElementById('btn-multi').addEventListener('click', () => {
+  for (let i = 0; i < 5; i++) {
+    const types = ['cube', 'sphere', 'pyramid', 'torus'];
+    createObject(types[Math.floor(Math.random() * types.length)]);
+  }
+});
+
+document.getElementById('btn-clear').addEventListener('click', () => {
+  objects.forEach(obj => scene.remove(obj));
+  objects = [];
+  handGrabbed = null;
+  isGrabbing = false;
+});
+
+// ========== INITIALIZE ==========
+window.addEventListener('load', () => {
+  initThreeJS();
+  camera2.start();
+});
+
+// Handle window resize
+window.addEventListener('resize', () => {
+  camera.aspect = container.clientWidth / container.clientHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(container.clientWidth, container.clientHeight);
+});
