@@ -2,8 +2,7 @@ body {
   margin: 0;
   background: #0a0a0a;
   background-image: 
-    radial-gradient(ellipse at 20% 50%, rgba(0, 255, 136, 0.03) 0%, transparent 60%),
-    radial-gradient(ellipse at 80% 50%, rgba(0, 255, 136, 0.02) 0%, transparent 60%),
+    radial-gradient(ellipse at 20% 50%, rgba(0, 255, 136, 0.02) 0%, transparent 60%),
     linear-gradient(180deg, #050505 0%, #0a0a0a 100%);
   overflow: hidden;
   font-family: 'Courier New', 'SF Mono', 'Fira Code', monospace;
@@ -32,8 +31,8 @@ body {
   overflow: hidden;
   position: relative;
   box-shadow: 
-    0 0 20px rgba(0, 255, 136, 0.08),
-    inset 0 0 30px rgba(0, 0, 0, 0.5);
+    0 0 15px rgba(0, 255, 136, 0.06),
+    inset 0 0 20px rgba(0, 0, 0, 0.4);
 }
 
 /* Sudut dekoratif cyberpunk */
@@ -92,15 +91,14 @@ video,
   left: 0;
 }
 
-/* Garis scanline */
+/* Garis scanline (dikurangi opacity) */
 .camera-section::before {
-  /* overwrite di atas, tambah scanline */
   background: repeating-linear-gradient(
     0deg,
     transparent,
     transparent 2px,
-    rgba(0, 255, 136, 0.015) 2px,
-    rgba(0, 255, 136, 0.015) 4px
+    rgba(0, 255, 136, 0.01) 2px,
+    rgba(0, 255, 136, 0.01) 4px
   );
   width: 100%;
   height: 100%;
@@ -109,7 +107,7 @@ video,
   left: 0;
   z-index: 3;
   pointer-events: none;
-  opacity: 0.6;
+  opacity: 0.4;
 }
 
 /* PARTICLE SECTION */
@@ -140,8 +138,8 @@ video,
   transition: all 0.25s ease;
   text-shadow: 0 0 8px rgba(0, 255, 136, 0.5);
   box-shadow: 
-    0 0 10px rgba(0, 255, 136, 0.1),
-    inset 0 0 10px rgba(0, 255, 136, 0.05);
+    0 0 8px rgba(0, 255, 136, 0.08),
+    inset 0 0 8px rgba(0, 255, 136, 0.03);
   clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
 }
 
@@ -152,14 +150,7 @@ video,
   text-shadow: none;
   transform: translateY(-2px);
   box-shadow: 
-    0 0 25px rgba(0, 255, 136, 0.6),
-    0 0 50px rgba(0, 255, 136, 0.3),
-    inset 0 0 20px rgba(0, 0, 0, 0.3);
-}
-
-/* Glow garis pemisah antar section */
-.main-container::after {
-  content: '';
-  position: absolute;
-  /* tidak terlalu perlu, bisa diabaikan */
+    0 0 20px rgba(0, 255, 136, 0.5),
+    0 0 40px rgba(0, 255, 136, 0.2),
+    inset 0 0 15px rgba(0, 0, 0, 0.2);
 }
