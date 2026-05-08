@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI Hand System</title>
+  <title>3D Hand Grab & Throw</title>
 
   <link rel="stylesheet" href="style.css">
 
@@ -11,6 +11,9 @@
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"></script>
+
+  <!-- THREE.JS for 3D -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
 
@@ -18,35 +21,31 @@
 
   <!-- CAMERA -->
   <div class="camera-section">
-
     <video class="input_video" autoplay playsinline></video>
-
     <canvas class="output_canvas"></canvas>
-
-    <canvas class="drawing_canvas"></canvas>
-
   </div>
 
-  <!-- PARTICLE -->
-  <div class="particle-section">
-
-    <canvas id="particle_canvas"></canvas>
-
-  </div>
+  <!-- 3D SCENE -->
+  <div class="scene-section" id="scene-container"></div>
 
 </div>
 
-<!-- OPTIONS -->
+<!-- OPTIONS & INFO -->
 <div class="options">
-
-  <button id="btnnormal">Normal</button>
-
-  <button id="btndrawing">Drawing</button>
-
-  <button id="btnclear">Clear</button>
-
+  <button id="btn-cube" class="active">Cube</button>
+  <button id="btn-sphere">Sphere</button>
+  <button id="btn-pyramid">Pyramid</button>
+  <button id="btn-torus">Torus</button>
+  <button id="btn-multi">Multi</button>
+  <button id="btn-clear">Clear</button>
 </div>
-// SCRIPT
+
+<div class="info-panel">
+  <div class="info-text" id="info">Ready to grab!</div>
+  <div class="gesture-indicator" id="gesture-icon">✋</div>
+</div>
+
+<!-- SCRIPT -->
 <script src="script.js"></script>
 
 </body>
