@@ -1,130 +1,165 @@
 body {
-
   margin: 0;
-
-  background: #050505;
-
+  background: #0a0a0a;
+  background-image: 
+    radial-gradient(ellipse at 20% 50%, rgba(0, 255, 136, 0.03) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 50%, rgba(0, 255, 136, 0.02) 0%, transparent 60%),
+    linear-gradient(180deg, #050505 0%, #0a0a0a 100%);
   overflow: hidden;
-
-  font-family: Arial;
-
+  font-family: 'Courier New', 'SF Mono', 'Fira Code', monospace;
   display: flex;
-
   flex-direction: column;
-
   align-items: center;
-
   justify-content: center;
-
   height: 100vh;
+  color: #00ff88;
 }
 
 /* TOP AREA */
 .main-container {
-
   display: flex;
-
-  gap: 20px;
-
+  gap: 24px;
   align-items: center;
+  padding: 20px;
 }
 
-/* CAMERA */
-.camera-section {
-
+/* CAMERA & SECTIONS */
+.camera-section, 
+.particle-section {
+  background: #0d0d0d;
+  border-radius: 4px;
+  border: 1px solid #1a1a1a;
+  overflow: hidden;
   position: relative;
+  box-shadow: 
+    0 0 20px rgba(0, 255, 136, 0.08),
+    inset 0 0 30px rgba(0, 0, 0, 0.5);
+}
 
+/* Sudut dekoratif cyberpunk */
+.camera-section::before,
+.camera-section::after,
+.particle-section::before,
+.particle-section::after {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-color: #00ff88;
+  border-style: solid;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.camera-section::before {
+  top: -1px;
+  left: -1px;
+  border-width: 2px 0 0 2px;
+}
+.camera-section::after {
+  top: -1px;
+  right: -1px;
+  border-width: 2px 2px 0 0;
+}
+
+.particle-section::before {
+  bottom: -1px;
+  left: -1px;
+  border-width: 0 0 2px 2px;
+}
+.particle-section::after {
+  bottom: -1px;
+  right: -1px;
+  border-width: 0 2px 2px 0;
+}
+
+.camera-section {
   width: 800px;
-
   height: 600px;
 }
 
 video,
-.output_canvas{
-
-  width: 800px;
-
-  height: 600px;
-
-  border-radius: 20px;
-
-  border: 2px solid #00ff88;
-
+.output_canvas {
+  width: 100%;
+  height: 100%;
   transform: scaleX(-1);
+  object-fit: cover;
 }
 
-.output_canvas,
-.drawing_canvas {
-
+.output_canvas {
   position: absolute;
-
   top: 0;
-
   left: 0;
 }
 
-/* PARTICLE */
-.particle-section {
-
-  width: 500px;
-
-  height: 600px;
-
-  border: 2px solid #00ff88;
-
-  border-radius: 20px;
-
-  overflow: hidden;
-
-  background: #0b0b0b;
-
-  position: relative;
-}
-
-#particle_canvas {
-
+/* Garis scanline */
+.camera-section::before {
+  /* overwrite di atas, tambah scanline */
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 255, 136, 0.015) 2px,
+    rgba(0, 255, 136, 0.015) 4px
+  );
   width: 100%;
-
   height: 100%;
+  border: none;
+  top: 0;
+  left: 0;
+  z-index: 3;
+  pointer-events: none;
+  opacity: 0.6;
 }
 
-/* OPTIONS */
+/* PARTICLE SECTION */
+.particle-section {
+  width: 500px;
+  height: 600px;
+}
+
+/* OPTIONS BUTTONS */
 .options {
-
-  margin-top: 20px;
-
+  margin-top: 30px;
   display: flex;
-
-  gap: 20px;
+  gap: 15px;
 }
 
 .options button {
-
-  padding: 15px 30px;
-
-  background: black;
-
-  border: 2px solid #00ff88;
-
+  padding: 12px 28px;
+  background: #0d0d0d;
+  border: 1px solid #00ff88;
   color: #00ff88;
-
-  border-radius: 12px;
-
+  border-radius: 2px;
   cursor: pointer;
-
-  font-size: 16px;
-
-  transition: 0.3s;
+  font-size: 13px;
+  font-weight: 700;
+  font-family: 'Courier New', monospace;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  transition: all 0.25s ease;
+  text-shadow: 0 0 8px rgba(0, 255, 136, 0.5);
+  box-shadow: 
+    0 0 10px rgba(0, 255, 136, 0.1),
+    inset 0 0 10px rgba(0, 255, 136, 0.05);
+  clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
 }
 
 .options button:hover {
-
   background: #00ff88;
-
-  color: black;
+  color: #0a0a0a;
+  border-color: #00ff88;
+  text-shadow: none;
+  transform: translateY(-2px);
+  box-shadow: 
+    0 0 25px rgba(0, 255, 136, 0.6),
+    0 0 50px rgba(0, 255, 136, 0.3),
+    inset 0 0 20px rgba(0, 0, 0, 0.3);
 }
-.drawing_canvas {
 
-  transform: none !important;
+/* Glow garis pemisah antar section */
+.main-container::after {
+  content: '';
+  position: absolute;
+  /* tidak terlalu perlu, bisa diabaikan */
 }
-/* MOBILE */
