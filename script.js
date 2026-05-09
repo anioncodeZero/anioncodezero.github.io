@@ -276,6 +276,63 @@ function onResults(results) {
   }
 }
 
+// ---- CAMERA SELECTION ----
+const cameraSelect = document.getElementById("cameraSelect");
+let currentCameraIndex = null;
+
+async function enumerateCameras() {
+  const devices = await navigator.mediaDevices.enumerateDevices();
+  const videoDevices = devices.filter(device => device.kind === "videoinput");
+
+  // Clear existing options except the placeholder
+  cameraSelect.innerHTML = '<option value="">Select Camera...</option>';
+
+  if (videoDevices.length === 0) {
+    const option = document.createElement("option");
+    option.value = "";
+    option.textContent = "No cameras found";
+    option.disabled = true;
+    option.selected = true;
+    cameraSelect.appendChild(option);
+    return;
+  }
+
+  videoDevices.forEach((device, index) => {
+    const option = document.createElement("option");
+    option.value = index;
+    option.textContent = device.label || `Camera ${index + 1}`;
+    cameraSelect.appendChild(option);
+  });
+}
+
+cameraSelect.addEventListener("change", async () => {
+  const selectedIndex = parseInt(cameraSelect.value);
+  if (isNaN(selectedIndex)) return;
+  currentCameraIndex = selectedIndex;
+
+  // Stop current camera stream if active
+  if (camera) {
+    await camera.stop();
+  }
+
+  // Get the device ID for the selected camera
+  const devices = await navigator.mediaDevices.enumerateDevices();
+  const videoDevices = devices.filter(d => d.kind === "videoinput");
+  const deviceId = videoDevices[selectedIndex]?.deviceId;
+
+  // Reinitialize camera with the selected device
+  camera = new Camera(videoElement, {
+    onFrame: async () => {
+      await hands.send({ image: videoElement });
+    },
+    width: 800,
+    height: 600,
+    source: deviceId ? { exact: deviceId } : undefined
+  });
+
+  camera.start();
+});
+
 const hands = new Hands({
   locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
 });
@@ -298,3 +355,6 @@ const camera = new Camera(videoElement, {
 });
 
 camera.start();
+
+// Enumerate cameras on load
+enumerateCameras();

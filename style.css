@@ -39,6 +39,51 @@ body {
   height: 600px;
 }
 
+/* CAMERA HEADER */
+.camera-header {
+
+  position: absolute;
+
+  top: 10px;
+
+  left: 10px;
+
+  z-index: 10;
+}
+
+.camera-header select {
+
+  padding: 8px 12px;
+
+  font-size: 14px;
+
+  border: 2px solid #00ff88;
+
+  border-radius: 8px;
+
+  background: rgba(5, 5, 5, 0.9);
+
+  color: #00ff88;
+
+  cursor: pointer;
+
+  outline: none;
+
+  appearance: auto;
+}
+
+.camera-header select:hover {
+
+  background: rgba(0, 255, 136, 0.15);
+}
+
+.camera-header select option {
+
+  background: #050505;
+
+  color: #00ff88;
+}
+
 video,
 .output_canvas{
 
