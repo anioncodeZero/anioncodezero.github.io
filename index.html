@@ -1,46 +1,93 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI Hand System</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HOTNEWS - Berita Viral</title>
 
-  <link rel="stylesheet" href="style.css">
-
-  <!-- MEDIAPIPE -->
-  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"></script>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-<div class="main-container">
+<header>
+    <div class="logo">HOTNEWS</div>
 
-  <!-- CAMERA -->
-  <div class="camera-section">
+    <nav>
+        <a href="#">Home</a>
+        <a href="#">Viral</a>
+        <a href="#">Politik</a>
+        <a href="#">Teknologi</a>
+        <a href="#">Game</a>
+    </nav>
+</header>
 
-    <div class="camera-header">
-      <select id="cameraSelect">
-        <option value="">Select Camera...</option>
-      </select>
+<section class="hero container">
+    <img src="https://picsum.photos/1200/500" alt="Headline">
+
+    <h1 id="headline-title">
+        Berita Paling Viral Hari Ini
+    </h1>
+
+    <p>
+        Semua yang sedang ramai dibicarakan netizen.
+    </p>
+</section>
+
+<div class="container">
+
+    <div class="news-grid">
+
+        <div class="card">
+            <img src="https://picsum.photos/400/250?1">
+
+            <div class="card-content">
+                <span class="tag">VIRAL</span>
+
+                <h3>Judul Berita Viral Pertama</h3>
+
+                <p>
+                    Ringkasan singkat isi berita...
+                </p>
+            </div>
+        </div>
+
+        <div class="card">
+            <img src="https://picsum.photos/400/250?2">
+
+            <div class="card-content">
+                <span class="tag">HOT</span>
+
+                <h3>Judul Berita Viral Kedua</h3>
+
+                <p>
+                    Ringkasan singkat isi berita...
+                </p>
+            </div>
+        </div>
+
+        <div class="card">
+            <img src="https://picsum.photos/400/250?3">
+
+            <div class="card-content">
+                <span class="tag">TRENDING</span>
+
+                <h3>Judul Berita Viral Ketiga</h3>
+
+                <p>
+                    Ringkasan singkat isi berita...
+                </p>
+            </div>
+        </div>
+
     </div>
 
-    <video class="input_video" autoplay playsinline></video>
-
-    <canvas class="output_canvas"></canvas>
-
-  </div>
-
 </div>
 
-<!-- OPTIONS -->
-<div class="options">
+<footer>
+    © 2026 HOTNEWS | Portal Berita Viral
+</footer>
 
-  <button id="btnballmatrix">Ball Matrix</button>
-
-</div>
-
-<script src="script.js"></script>
+<script src="js/script.js"></script>
 
 </body>
 </html>
