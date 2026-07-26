@@ -110,9 +110,24 @@
         </div>
         
         <div class="hero-image fade-up">
-          <!-- Ganti dengan foto profile pribadi -->
-          <div class="profile-placeholder" aria-label="Foto Profil Andika Harsel">
-            <span class="profile-initials"> <img src="❀ ˖° l.jpeg" alt="Foto Profil Saya" width="400"></span>
+          <div class="profile-wrapper" aria-label="Foto Profil Andika Harsel">
+            <img 
+              src="❀ ˖° l.jpeg" 
+              alt="Foto Profil Andika Harsel"
+              class="profile-image"
+              loading="lazy"
+              onerror="this.style.display='none'; this.parentElement.querySelector('.profile-fallback').style.display='flex';"
+            >
+            
+            <!-- Fallback jika foto tidak ditemukan -->
+            <div class="profile-fallback" style="display: none;">
+              <i class="fas fa-user-astronaut"></i>
+              <span class="profile-initials">AH</span>
+              <small>Foto tidak ditemukan</small>
+            </div>
+            
+            <!-- Border dekoratif -->
+            <div class="profile-border"></div>
           </div>
         </div>
       </div>
