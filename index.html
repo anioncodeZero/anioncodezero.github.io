@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="Portfolio pribadi Andika Harsel yang menampilkan berbagai proyek Web Development, Python, Cyber Security, dan Desktop Application.">
+  <meta name="keywords" content="Andika Harsel, Web Developer, Python Developer, Cyber Security, Portfolio, Mahasiswa Teknik Informatika">
+  <meta name="author" content="Andika Harsel">
+  <meta name="theme-color" content="#0B0F19">
+  <meta name="robots" content="index, follow">
+  
+  <!-- Open Graph / Social Media -->
+  <meta property="og:title" content="Andika Harsel | Web Developer Portfolio">
+  <meta property="og:description" content="Portfolio pribadi Andika Harsel yang menampilkan berbagai proyek Web Development, Python, Cyber Security, dan Desktop Application.">
+  <meta property="og:type" content="website">
+  
+  <title>Andika Harsel | Web Developer Portfolio</title>
+  
+  <!-- Google Fonts: Inter untuk body, Poppins untuk heading -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Font Awesome 6 untuk icon modern -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- ============================================================
+       LOADING SCREEN
+       ============================================================ -->
+  <div id="loading-screen" class="loading-screen" aria-hidden="true">
+    <div class="loader">
+      <div class="loader-ring"></div>
+      <p class="loader-text">Memuat...</p>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       SCROLL PROGRESS BAR
+       ============================================================ -->
+  <div class="scroll-progress" id="scroll-progress" aria-hidden="true"></div>
+
+  <!-- ============================================================
+       STICKY NAVIGATION
+       ============================================================ -->
+  <header class="navbar" id="navbar" role="banner">
+    <div class="container nav-container">
+      <a href="#hero" class="nav-logo" aria-label="Andika Harsel - Kembali ke Beranda">
+        Andika<span>.</span>
+      </a>
+      
+      <nav class="nav-menu" aria-label="Navigasi Utama">
+        <ul class="nav-list" id="nav-list" role="menubar">
+          <li role="none"><a href="#hero" class="nav-link active" role="menuitem">Beranda</a></li>
+          <li role="none"><a href="#about" class="nav-link" role="menuitem">Tentang</a></li>
+          <li role="none"><a href="#skills" class="nav-link" role="menuitem">Skill</a></li>
+          <li role="none"><a href="#projects" class="nav-link" role="menuitem">Project</a></li>
+          <li role="none"><a href="#github" class="nav-link" role="menuitem">GitHub</a></li>
+          <li role="none"><a href="#timeline" class="nav-link" role="menuitem">Perjalanan</a></li>
+          <li role="none"><a href="#certificates" class="nav-link" role="menuitem">Sertifikat</a></li>
+          <li role="none"><a href="#contact" class="nav-link" role="menuitem">Kontak</a></li>
+        </ul>
+      </nav>
+      
+      <button class="nav-toggle" id="nav-toggle" aria-label="Buka Menu Navigasi" aria-expanded="false">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <!-- ============================================================
+         HERO SECTION - dengan Particle Canvas & Typing Effect
+         ============================================================ -->
+    <section id="hero" class="hero-section">
+      <canvas id="particle-canvas" aria-hidden="true"></canvas>
+      
+      <div class="container hero-container">
+        <div class="hero-content">
+          <p class="hero-greeting fade-up">Halo, Saya</p>
+          <h1 class="hero-name fade-up">Andika Harsel</h1>
+          
+          <div class="hero-roles fade-up">
+            <span id="typed-text"></span><span class="cursor-blink">|</span>
+          </div>
+          
+          <p class="hero-subtitle fade-up">
+            Mahasiswa Teknik Informatika • Web Developer • Python Developer • Cyber Security Enthusiast
+          </p>
+          
+          <p class="hero-motto fade-up">
+            <i class="fas fa-quote-left"></i> Building useful software, one project at a time. <i class="fas fa-quote-right"></i>
+          </p>
+          
+          <div class="hero-cta fade-up">
+            <a href="#about" class="btn btn-primary ripple">Tentang Saya</a>
+            <a href="#projects" class="btn btn-outline ripple">Lihat Project</a>
+            <a href="#contact" class="btn btn-outline ripple">Hubungi Saya</a>
+            <a href="#" class="btn btn-primary ripple" id="download-cv" download>
+              <i class="fas fa-download"></i> Download CV
+            </a>
+          </div>
+        </div>
+        
+        <div class="hero-image fade-up">
+          <!-- Ganti dengan foto profile pribadi -->
+          <div class="profile-placeholder" aria-label="Foto Profil Andika Harsel">
+            <i class="fas fa-user-astronaut"></i>
+            <span class="profile-initials">AH</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="scroll-indicator" aria-hidden="true">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         ABOUT SECTION
+         ============================================================ -->
+    <section id="about" class="section about-section">
+      <div class="container reveal">
+        <h2 class="section-title">Tentang <span>Saya</span></h2>
+        
+        <div class="about-content">
+          <div class="about-text">
+            <p>
+              Saya adalah mahasiswa Teknik Informatika yang memiliki minat besar pada 
+              <strong>Web Development</strong>, <strong>Python Programming</strong>, 
+              <strong>Cyber Security</strong>, dan <strong>Software Development</strong>. 
+              Saya senang membangun aplikasi yang bermanfaat, mempelajari teknologi baru, 
+              serta terus mengembangkan kemampuan melalui berbagai proyek nyata.
+            </p>
+            <p>
+              Saat ini saya aktif mengerjakan proyek-proyek pribadi yang mencakup pengembangan 
+              website, aplikasi desktop, dan tools keamanan siber. Saya percaya bahwa belajar 
+              melalui praktik langsung adalah cara terbaik untuk memahami teknologi secara mendalam.
+            </p>
+            <p>
+              Saya selalu terbuka untuk kesempatan kolaborasi, magang, atau proyek freelance 
+              yang dapat membantu saya tumbuh sebagai developer profesional.
+            </p>
+          </div>
+          
+          <div class="about-stats">
+            <div class="stat-item">
+              <span class="stat-number" data-target="6">0</span>
+              <span class="stat-label">Project Selesai</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number" data-target="3">0</span>
+              <span class="stat-label">Tahun Belajar</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number" data-target="12">0</span>
+              <span class="stat-label">Teknologi</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         SKILLS SECTION
+         ============================================================ -->
+    <section id="skills" class="section skills-section">
+      <div class="container reveal">
+        <h2 class="section-title">Keahlian <span>Saya</span></h2>
+        
+        <div class="skills-grid">
+          <!-- Frontend -->
+          <div class="skill-card">
+            <div class="skill-icon"><i class="fas fa-code"></i></div>
+            <h3>Frontend</h3>
+            <ul class="skill-list">
+              <li><i class="fab fa-html5"></i> HTML5</li>
+              <li><i class="fab fa-css3-alt"></i> CSS3</li>
+              <li><i class="fab fa-js-square"></i> JavaScript</li>
+            </ul>
+          </div>
+          
+          <!-- Backend -->
+          <div class="skill-card">
+            <div class="skill-icon"><i class="fas fa-server"></i></div>
+            <h3>Backend</h3>
+            <ul class="skill-list">
+              <li><i class="fab fa-python"></i> Python</li>
+              <li><i class="fas fa-flask"></i> Flask</li>
+              <li><i class="fab fa-php"></i> PHP</li>
+            </ul>
+          </div>
+          
+          <!-- Programming Languages -->
+          <div class="skill-card">
+            <div class="skill-icon"><i class="fas fa-cogs"></i></div>
+            <h3>Programming</h3>
+            <ul class="skill-list">
+              <li><i class="fab fa-java"></i> Java</li>
+              <li><i class="fas fa-copyright"></i> C / C++</li>
+              <li><i class="fab fa-python"></i> Python</li>
+            </ul>
+          </div>
+          
+          <!-- Database -->
+          <div class="skill-card">
+            <div class="skill-icon"><i class="fas fa-database"></i></div>
+            <h3>Database</h3>
+            <ul class="skill-list">
+              <li><i class="fas fa-database"></i> MySQL</li>
+              <li><i class="fas fa-database"></i> SQLite</li>
+            </ul>
+          </div>
+          
+          <!-- Tools -->
+          <div class="skill-card">
+            <div class="skill-icon"><i class="fas fa-toolbox"></i></div>
+            <h3>Tools</h3>
+            <ul class="skill-list">
+              <li><i class="fab fa-git-alt"></i> Git</li>
+              <li><i class="fab fa-github"></i> GitHub</li>
+              <li><i class="fas fa-code"></i> VS Code</li>
+              <li><i class="fas fa-mug-hot"></i> NetBeans</li>
+              <li><i class="fas fa-server"></i> XAMPP</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         PROJECTS SECTION
+         ============================================================ -->
+    <section id="projects" class="section projects-section">
+      <div class="container reveal">
+        <h2 class="section-title">Project <span>Unggulan</span></h2>
+        
+        <div class="projects-grid">
+          <!-- Project 1: WebGuard Scanner -->
+          <article class="project-card">
+            <div class="project-img">
+              <i class="fas fa-shield-haltered"></i>
+            </div>
+            <div class="project-info">
+              <div class="project-header">
+                <h3>WebGuard Scanner</h3>
+                <span class="project-status completed">Completed</span>
+              </div>
+              <p class="project-category">Cyber Security</p>
+              <p class="project-desc">
+                Aplikasi berbasis Python dan Flask untuk menganalisis keamanan website. 
+                Fitur: Website Scanner, Port Scanner, HTTP Header Analysis, DNS Lookup, 
+                Security Score, dan Subdomain Discovery.
+              </p>
+              <div class="project-tech">
+                <span>Python</span><span>Flask</span><span>SQLite</span>
+                <span>HTML</span><span>CSS</span><span>JavaScript</span>
+              </div>
+              <div class="project-links">
+                <a href="#" class="btn btn-sm btn-primary ripple">Live Demo</a>
+                <a href="#" class="btn btn-sm btn-outline ripple">
+                  <i class="fab fa-github"></i> GitHub
+                </a>
+              </div>
+            </div>
+          </article>
+          
+          <!-- Project 2: Rental PlayStation Management -->
+          <article class="project-card">
+            <div class="project-img">
+              <i class="fas fa-gamepad"></i>
+            </div>
+            <div class="project-info">
+              <div class="project-header">
+                <h3>Rental PS Management</h3>
+                <span class="project-status completed">Completed</span>
+              </div>
+              <p class="project-category">Desktop Application</p>
+              <p class="project-desc">
+                Aplikasi desktop Java Swing untuk manajemen penyewaan PlayStation. 
+                Mendukung CRUD data pelanggan, data PlayStation, transaksi, dan perhitungan otomatis.
+              </p>
+              <div class="project-tech">
+                <span>Java</span><span>Swing</span><span>MySQL</span>
+              </div>
+              <div class="project-links">
+                <a href="#" class="btn btn-sm btn-primary ripple">Live Demo</a>
+                <a href="#" class="btn btn-sm btn-outline ripple">
+                  <i class="fab fa-github"></i> GitHub
+                </a>
+              </div>
+            </div>
+          </article>
+          
+          <!-- Project 3: Animasi 3D OpenGL -->
+          <article class="project-card">
+            <div class="project-img">
+              <i class="fas fa-cube"></i>
+            </div>
+            <div class="project-info">
+              <div class="project-header">
+                <h3>Animasi 3D OpenGL</h3>
+                <span class="project-status completed">Completed</span>
+              </div>
+              <p class="project-category">Computer Graphics</p>
+              <p class="project-desc">
+                Program animasi objek 3D menggunakan OpenGL sebagai media pembelajaran 
+                grafika komputer dengan visualisasi interaktif.
+              </p>
+              <div class="project-tech">
+                <span>C++</span><span>OpenGL</span>
+              </div>
+              <div class="project-links">
+                <a href="#" class="btn btn-sm btn-primary ripple">Live Demo</a>
+                <a href="#" class="btn btn-sm btn-outline ripple">
+                  <i class="fab fa-github"></i> GitHub
+                </a>
+              </div>
+            </div>
+          </article>
+          
+          <!-- Project 4: Portal Berita -->
+          <article class="project-card">
+            <div class="project-img">
+              <i class="fas fa-newspaper"></i>
+            </div>
+            <div class="project-info">
+              <div class="project-header">
+                <h3>Portal Berita</h3>
+                <span class="project-status completed">Completed</span>
+              </div>
+              <p class="project-category">Web Development</p>
+              <p class="project-desc">
+                Website berita modern dengan tampilan responsif menggunakan HTML, CSS, 
+                dan JavaScript murni tanpa framework.
+              </p>
+              <div class="project-tech">
+                <span>HTML</span><span>CSS</span><span>JavaScript</span>
+              </div>
+              <div class="project-links">
+                <a href="#" class="btn btn-sm btn-primary ripple">Live Demo</a>
+                <a href="#" class="btn btn-sm btn-outline ripple">
+                  <i class="fab fa-github"></i> GitHub
+                </a>
+              </div>
+            </div>
+          </article>
+          
+          <!-- Project 5: Python Web Crawler -->
+          <article class="project-card">
+            <div class="project-img">
+              <i class="fas fa-spider"></i>
+            </div>
+            <div class="project-info">
+              <div class="project-header">
+                <h3>Python Web Crawler</h3>
+                <span class="project-status development">Development</span>
+              </div>
+              <p class="project-category">Automation</p>
+              <p class="project-desc">
+                Program Python untuk melakukan crawling website dan mengumpulkan 
+                informasi tertentu secara otomatis dengan konfigurasi fleksibel.
+              </p>
+              <div class="project-tech">
+                <span>Python</span>
+              </div>
+              <div class="project-links">
+                <a href="#" class="btn btn-sm btn-primary ripple">Live Demo</a>
+                <a href="#" class="btn btn-sm btn-outline ripple">
+                  <i class="fab fa-github"></i> GitHub
+                </a>
+              </div>
+            </div>
+          </article>
+          
+          <!-- Project 6: Placeholder -->
+          <article class="project-card project-placeholder">
+            <div class="project-img">
+              <i class="fas fa-sparkles"></i>
+            </div>
+            <div class="project-info">
+              <div class="project-header">
+                <h3>Project Selanjutnya</h3>
+                <span class="project-status planning">Coming Soon</span>
+              </div>
+              <p class="project-category">--</p>
+              <p class="project-desc">
+                Sedang dalam tahap perencanaan. Project baru akan segera hadir 
+                dengan teknologi dan inovasi terbaru.
+              </p>
+              <div class="project-tech">
+                <span>Segera</span>
+              </div>
+              <div class="project-links">
+                <a href="#" class="btn btn-sm btn-outline ripple">Segera Hadir</a>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         GITHUB SECTION
+         ============================================================ -->
+    <section id="github" class="section github-section">
+      <div class="container reveal">
+        <h2 class="section-title">GitHub <span>Profile</span></h2>
+        
+        <div class="github-wrapper">
+          <div class="github-profile">
+            <div class="github-avatar">
+              <i class="fab fa-github"></i>
+            </div>
+            <div class="github-info">
+              <h3>anioncode</h3>
+              <p class="github-bio">Mahasiswa Teknik Informatika | Web Developer | Python Enthusiast</p>
+              <div class="github-stats">
+                <div class="github-stat">
+                  <i class="fas fa-code-branch"></i>
+                  <span>5+ Repositories</span>
+                </div>
+                <div class="github-stat">
+                  <i class="fas fa-star"></i>
+                  <span>Open Source</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="github-repos">
+            <h4>Repository Highlights</h4>
+            <div class="repo-grid">
+              <a href="#" class="repo-card">
+                <i class="fas fa-bookmark"></i>
+                <span>WebGuard</span>
+                <small>Python • Flask</small>
+              </a>
+              <a href="#" class="repo-card">
+                <i class="fas fa-bookmark"></i>
+                <span>searchBot</span>
+                <small>Python</small>
+              </a>
+              <a href="#" class="repo-card">
+                <i class="fas fa-bookmark"></i>
+                <span>chromecastpy</span>
+                <small>Python</small>
+              </a>
+              <a href="#" class="repo-card">
+                <i class="fas fa-bookmark"></i>
+                <span>mediapipe.github.io</span>
+                <small>Web</small>
+              </a>
+              <a href="#" class="repo-card">
+                <i class="fas fa-bookmark"></i>
+                <span>anioncodezero.github.io</span>
+                <small>Portfolio</small>
+              </a>
+            </div>
+          </div>
+          
+          <div class="github-cta">
+            <a href="https://github.com/anioncodeZero" target="_blank" rel="noopener noreferrer" class="btn btn-primary ripple">
+              <i class="fab fa-github"></i> Lihat GitHub Saya
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         TIMELINE SECTION
+         ============================================================ -->
+    <section id="timeline" class="section timeline-section">
+      <div class="container reveal">
+        <h2 class="section-title">Perjalanan <span>Belajar</span></h2>
+        
+        <div class="timeline">
+          <div class="timeline-item left">
+            <div class="timeline-content">
+              <h3>Teknik Informatika</h3>
+              <span class="timeline-date">2023 - Sekarang</span>
+              <p>Menempuh studi S1 Teknik Informatika, fokus pada pemrograman, jaringan, dan keamanan siber.</p>
+            </div>
+          </div>
+          
+          <div class="timeline-item right">
+            <div class="timeline-content">
+              <h3>Web Development</h3>
+              <span class="timeline-date">2022</span>
+              <p>Mempelajari HTML, CSS, JavaScript dan membangun website statis pertama secara otodidak.</p>
+            </div>
+          </div>
+          
+          <div class="timeline-item left">
+            <div class="timeline-content">
+              <h3>Python & Flask</h3>
+              <span class="timeline-date">2023</span>
+              <p>Mulai mengembangkan aplikasi backend dengan Python dan Flask, termasuk WebGuard Scanner.</p>
+            </div>
+          </div>
+          
+          <div class="timeline-item right">
+            <div class="timeline-content">
+              <h3>Cyber Security</h3>
+              <span class="timeline-date">2024</span>
+              <p>Mendalami ethical hacking, keamanan jaringan, dan pengembangan tools keamanan.</p>
+            </div>
+          </div>
+          
+          <div class="timeline-item left">
+            <div class="timeline-content">
+              <h3>Desktop Application</h3>
+              <span class="timeline-date">2024</span>
+              <p>Mengembangkan aplikasi desktop dengan Java Swing dan MySQL untuk manajemen bisnis.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         CERTIFICATES SECTION
+         ============================================================ -->
+    <section id="certificates" class="section certificates-section">
+      <div class="container reveal">
+        <h2 class="section-title">Sertifikat <span>& Prestasi</span></h2>
+        
+        <div class="certificates-grid">
+          <div class="certificate-card">
+            <i class="fas fa-certificate"></i>
+            <p>Python Fundamental</p>
+            <span>2024</span>
+          </div>
+          <div class="certificate-card">
+            <i class="fas fa-shield"></i>
+            <p>Cybersecurity Essentials</p>
+            <span>2024</span>
+          </div>
+          <div class="certificate-card">
+            <i class="fas fa-code"></i>
+            <p>Web Development Dasar</p>
+            <span>2023</span>
+          </div>
+          <div class="certificate-card">
+            <i class="fas fa-database"></i>
+            <p>Database MySQL</p>
+            <span>2023</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         CONTACT SECTION
+         ============================================================ -->
+    <section id="contact" class="section contact-section">
+      <div class="container reveal">
+        <h2 class="section-title">Hubungi <span>Saya</span></h2>
+        
+        <div class="contact-wrapper">
+          <div class="contact-info">
+            <div class="contact-item">
+              <i class="fas fa-user"></i>
+              <div>
+                <strong>Nama</strong>
+                <p>Andika Harsel</p>
+              </div>
+            </div>
+            
+            <div class="contact-item">
+              <i class="fas fa-envelope"></i>
+              <div>
+                <strong>Email</strong>
+                <p>andikaharsel29@gmail.com</p>
+              </div>
+            </div>
+            
+            <div class="contact-item">
+              <i class="fab fa-whatsapp"></i>
+              <div>
+                <strong>WhatsApp</strong>
+                <p>+62 857-6646-7096</p>
+              </div>
+            </div>
+            
+            <div class="contact-item">
+              <i class="fab fa-instagram"></i>
+              <div>
+                <strong>Instagram</strong>
+                <p>@and_ikaharsel</p>
+              </div>
+            </div>
+            
+            <div class="contact-item">
+              <i class="fab fa-github"></i>
+              <div>
+                <strong>GitHub</strong>
+                <p>github.com/anioncodeZero</p>
+              </div>
+            </div>
+            
+            <div class="contact-actions">
+              <a href="https://wa.me/6285766467096" target="_blank" rel="noopener noreferrer" class="btn btn-primary ripple">
+                <i class="fab fa-whatsapp"></i> WhatsApp
+              </a>
+              <a href="https://instagram.com/and_ikaharsel" target="_blank" rel="noopener noreferrer" class="btn btn-outline ripple">
+                <i class="fab fa-instagram"></i> Instagram
+              </a>
+              <a href="https://github.com/anioncodeZero" target="_blank" rel="noopener noreferrer" class="btn btn-outline ripple">
+                <i class="fab fa-github"></i> GitHub
+              </a>
+            </div>
+          </div>
+          
+          <form class="contact-form" id="contact-form">
+            <div class="form-group">
+              <label for="name" class="sr-only">Nama Lengkap</label>
+              <input type="text" id="name" placeholder="Nama Lengkap" required>
+            </div>
+            <div class="form-group">
+              <label for="email" class="sr-only">Alamat Email</label>
+              <input type="email" id="email" placeholder="Alamat Email" required>
+            </div>
+            <div class="form-group">
+              <label for="subject" class="sr-only">Subjek</label>
+              <input type="text" id="subject" placeholder="Subjek Pesan">
+            </div>
+            <div class="form-group">
+              <label for="message" class="sr-only">Pesan Anda</label>
+              <textarea id="message" rows="5" placeholder="Tulis pesan Anda di sini..." required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary ripple btn-block">
+              <i class="fas fa-paper-plane"></i> Kirim Pesan
+            </button>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============================================================
+       FOOTER
+       ============================================================ -->
+  <footer class="footer" role="contentinfo">
+    <div class="container footer-container">
+      <p>&copy; 2026 Andika Harsel. Dibangun dengan <i class="fas fa-heart"></i> menggunakan HTML, CSS, dan JavaScript.</p>
+      <div class="footer-links">
+        <a href="#hero" aria-label="Kembali ke atas">
+          <i class="fas fa-arrow-up"></i>
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ============================================================
+       BACK TO TOP BUTTON
+       ============================================================ -->
+  <button id="back-to-top" class="back-to-top" aria-label="Kembali ke Atas">
+    <i class="fas fa-chevron-up"></i>
+  </button>
+
+  <!-- Custom JavaScript -->
+  <script src="script.js"></script>
+</body>
+</html>
