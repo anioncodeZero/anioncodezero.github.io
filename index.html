@@ -110,24 +110,40 @@
         </div>
         
         <div class="hero-image fade-up">
-          <div class="profile-wrapper" aria-label="Foto Profil Andika Harsel">
+          <!-- 
+            ============================================
+            FOTO PROFILE - WHATSAPP STYLE
+            ============================================
+            Cara mengganti foto:
+            1. Simpan foto Anda di folder yang sama
+               Contoh nama file: foto-andika.jpg
+            2. Ganti src di bawah dengan nama file foto Anda
+            3. Gunakan foto persegi (1:1) untuk hasil terbaik
+               Ukuran rekomendasi: 500x500 pixel
+            ============================================
+          -->
+          <div class="whatsapp-avatar-wrapper" aria-label="Foto Profil Andika Harsel">
+            <!-- Foto Utama -->
             <img 
-              src="❀ ˖° l.jpeg" 
+              src="foto-andika.jpg" 
               alt="Foto Profil Andika Harsel"
-              class="profile-image"
+              class="whatsapp-avatar"
               loading="lazy"
-              onerror="this.style.display='none'; this.parentElement.querySelector('.profile-fallback').style.display='flex';"
+              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
             >
             
-            <!-- Fallback jika foto tidak ditemukan -->
-            <div class="profile-fallback" style="display: none;">
-              <i class="fas fa-user-astronaut"></i>
-              <span class="profile-initials">AH</span>
-              <small>Foto tidak ditemukan</small>
+            <!-- Placeholder jika foto belum ada -->
+            <div class="whatsapp-avatar-placeholder" style="display: flex;">
+              <span class="avatar-initials">AH</span>
             </div>
             
-            <!-- Border dekoratif -->
-            <div class="profile-border"></div>
+            <!-- Border putih ala WhatsApp -->
+            <div class="avatar-border"></div>
+            
+            <!-- Status online indicator -->
+            <div class="online-indicator" title="Available for work">
+              <div class="online-dot"></div>
+            </div>
           </div>
         </div>
       </div>
